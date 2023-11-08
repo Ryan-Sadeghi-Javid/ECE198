@@ -10,8 +10,8 @@ int main(void) {
     GPIO_Init();
 
     while (1) {
-        // Simulated variable value (replace with your actual variable)
-        uint32_t variableValue = 75; // Example value
+        // Simulated variable value (replace with actual variable)
+        uint32_t variableValue = 75; // Example BPM
 
         if (variableValue >= 40 && variableValue <= 90) {
             turnOnGreenLED();
