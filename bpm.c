@@ -13,9 +13,9 @@ int main(void) {
         // Simulated variable value (replace with actual variable)
         uint32_t variableValue = 75; // Example BPM
 
-        if (variableValue >= 40 && variableValue <= 90) {
+        if (variableValue >= 30 && variableValue <= 95) {
             turnOnGreenLED();
-        } else if ((variableValue >= 30 && variableValue <= 40) || (variableValue >= 100 && variableValue <= 120)) {
+        } else if ((variableValue >= 20 && variableValue <= 30) || (variableValue >= 95 && variableValue <= 120)) {
             turnOnYellowLED();
         } else {
             turnOnRedLED();
