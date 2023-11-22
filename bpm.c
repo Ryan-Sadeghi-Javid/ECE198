@@ -10,6 +10,9 @@ ADC_HandleTypeDef hadc1;
 // Define GPIO port for LEDs
 #define LED_PORT GPIOA
 
+// Flicker delay (adjust as needed)
+#define FLICKER_DELAY 100
+
 // Function prototypes
 void SystemClock_Config(void);
 void Error_Handler(void);
@@ -67,8 +70,7 @@ int main(void) {
         // Wait for the ADC conversion to complete
         if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
             // Read the ADC value
-
-            uint16_t variableValue = HAL_ADC_GetValue(&hadc1)/1024;
+            uint16_t variableValue = HAL_ADC_GetValue(&hadc1);
 
             // Check conditions and control LEDs accordingly
             if (variableValue >= 40 && variableValue <= 90) {
@@ -78,10 +80,8 @@ int main(void) {
                 // Turn on the yellow LED
                 turnOnYellowLED();
             } else {
-                // Turn on the red LED
-                HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
-                HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
-                HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_SET);
+                // Turn on the red LED and make it flicker
+                turnOnRedLED();
             }
         }
     }
@@ -148,4 +148,7 @@ void turnOnRedLED() {
     HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_SET);
+    HAL_Delay(FLICKER_DELAY);
+    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+    HAL_Delay(FLICKER_DELAY);
 }
