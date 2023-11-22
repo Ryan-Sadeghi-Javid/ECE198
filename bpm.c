@@ -10,6 +10,9 @@ ADC_HandleTypeDef hadc1;
 // Define GPIO port for LEDs
 #define LED_PORT GPIOA
 
+// Flicker delay (adjust as needed)
+#define FLICKER_DELAY 100
+
 // Function prototypes
 void SystemClock_Config(void);
 void Error_Handler(void);
@@ -65,28 +68,33 @@ int main(void) {
 
     while (1) {
         // Wait for the ADC conversion to complete
-            // Read the ADC value
         if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
-
-            uint16_t variableValue = HAL_ADC_GetValue(&hadc1)/1024;
+            // Read the ADC value
+            uint16_t variableValue = HAL_ADC_GetValue(&hadc1);
 
             // Check conditions and control LEDs accordingly
             if (variableValue >= 40 && variableValue <= 90) {
                 // Turn on the green LED
-                turnOnGreenLED();
+                HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_SET);
+                HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
             } else if ((variableValue >= 30 && variableValue <= 40) || (variableValue >= 100 && variableValue <= 120)) {
                 // Turn on the yellow LED
-                turnOnYellowLED();
+                HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_SET);
+                HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
             } else {
-                // Turn on the red LED
+                // Turn on the red LED and make it flicker
                 HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
                 HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
                 HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_SET);
+                HAL_Delay(FLICKER_DELAY);
+                HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+                HAL_Delay(FLICKER_DELAY);
             }
         }
     }
 }
-
 
 // System Clock Configuration
 void SystemClock_Config(void) {
@@ -131,22 +139,4 @@ void Error_Handler(void) {
     while (1) {
         // Infinite loop
     }
-}
-
-void turnOnGreenLED() {
-    HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
-}
-
-void turnOnYellowLED() {
-    HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
-}
-
-void turnOnRedLED() {
-    HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_SET);
 }
