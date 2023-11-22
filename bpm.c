@@ -65,21 +65,18 @@ int main(void) {
 
     while (1) {
         // Wait for the ADC conversion to complete
+        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
             // Read the ADC value
 
-            uint16_t variableValue = HAL_ADC_GetValue(&hadc1);
+            uint16_t variableValue = HAL_ADC_GetValue(&hadc1)/1024;
 
             // Check conditions and control LEDs accordingly
             if (variableValue >= 40 && variableValue <= 90) {
                 // Turn on the green LED
-                HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_SET);
-                HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
-                HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+                turnOnGreenLED();
             } else if ((variableValue >= 30 && variableValue <= 40) || (variableValue >= 100 && variableValue <= 120)) {
                 // Turn on the yellow LED
-                HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
-                HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_SET);
-                HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+                turnOnYellowLED();
             } else {
                 // Turn on the red LED
                 HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
@@ -88,7 +85,7 @@ int main(void) {
             }
         }
     }
-
+}
 
 // System Clock Configuration
 void SystemClock_Config(void) {
@@ -133,4 +130,22 @@ void Error_Handler(void) {
     while (1) {
         // Infinite loop
     }
+}
+
+void turnOnGreenLED() {
+    HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+}
+
+void turnOnYellowLED() {
+    HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_RESET);
+}
+
+void turnOnRedLED() {
+    HAL_GPIO_WritePin(LED_PORT, GREEN_LED_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_PORT, YELLOW_LED_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_PORT, RED_LED_PIN, GPIO_PIN_SET);
 }
