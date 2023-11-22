@@ -65,10 +65,9 @@ int main(void) {
 
     while (1) {
         // Wait for the ADC conversion to complete
-        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
             // Read the ADC value
 
-            uint16_t variableValue = HAL_ADC_GetValue(&hadc1)/1024;
+            uint16_t variableValue = HAL_ADC_GetValue(&hadc1);
 
             // Check conditions and control LEDs accordingly
             if (variableValue >= 40 && variableValue <= 90) {
@@ -89,7 +88,7 @@ int main(void) {
             }
         }
     }
-}
+
 
 // System Clock Configuration
 void SystemClock_Config(void) {
